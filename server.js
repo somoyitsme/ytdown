@@ -41,7 +41,7 @@ app.use(express.json());
 
 
 // ===== Temp directory for downloads =====
-const TEMP_DIR = path.join(os.tmpdir(), 'grabtube-downloads');
+const TEMP_DIR = path.join(os.tmpdir(), 'ytdown-downloads');
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
 
 // ===== In-memory cache for video info (avoids re-fetching same URL) =====
@@ -383,5 +383,5 @@ app.get('/api/health', (req, res) => {
 
 // ===== Start server =====
 app.listen(PORT, () => {
-  console.log(`\n  🚀 GrabTube server running at http://localhost:${PORT}\n`);
+  console.log(`\n  🚀 YT Down server running at http://localhost:${PORT}\n`);
 });

@@ -1,5 +1,5 @@
 {
-  "name": "grabtube",
+  "name": "ytdown",
   "version": "1.0.0",
   "description": "YouTube video & audio downloader",
   "main": "server.js",

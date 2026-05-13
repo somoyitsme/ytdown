@@ -1,4 +1,4 @@
-# 🎬 GrabTube
+# 🎬 YT Down
 
 > Download YouTube videos and audio in the highest quality — via web or Telegram bot.
 
@@ -96,8 +96,8 @@ npm run bot
 ## 🐳 Docker
 
 ```bash
-docker build -t grabtube .
-docker run -p 3000:3000 --env-file .env grabtube
+docker build -t ytdown .
+docker run -p 3000:3000 --env-file .env ytdown
 ```
 
 ---

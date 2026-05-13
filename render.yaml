@@ -1,7 +1,7 @@
 services:
   # Telegram Bot — runs 24/7 as a background worker
   - type: worker
-    name: grabtube-bot
+    name: ytdown-bot
     runtime: docker
     dockerfilePath: ./Dockerfile
     dockerCommand: node bot.js
@@ -13,7 +13,7 @@ services:
   # Uncomment below to also deploy the web UI
   #
   # - type: web
-  #   name: grabtube-web
+  #   name: ytdown-web
   #   runtime: docker
   #   dockerfilePath: ./Dockerfile
   #   dockerCommand: node server.js

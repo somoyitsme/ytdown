@@ -1,5 +1,5 @@
 /**
- * GrabTube Telegram Bot
+ * YT Down Telegram Bot
  *
  * Lets users send a YouTube link and receive the video (MP4) or audio (MP3)
  * directly in Telegram.
@@ -32,7 +32,7 @@ if (!TOKEN) {
 }
 
 const bot = new TelegramBot(TOKEN, { polling: true });
-const TEMP_DIR = path.join(os.tmpdir(), 'grabtube-bot');
+const TEMP_DIR = path.join(os.tmpdir(), 'ytdown-bot');
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
 
 const TELEGRAM_FILE_LIMIT = 50 * 1024 * 1024; // 50 MB
@@ -167,7 +167,7 @@ function downloadToFile(url, type, outputPath) {
 
 bot.onText(/\/start/, (msg) => {
   bot.sendMessage(msg.chat.id, [
-    '👋 *Welcome to GrabTube Bot!*',
+    '👋 *Welcome to YT Down Bot!*',
     '',
     'Send me any YouTube link and I\'ll give you options to download:',
     '🎬 *Video* — Best quality MP4',
@@ -179,7 +179,7 @@ bot.onText(/\/start/, (msg) => {
 
 bot.onText(/\/help/, (msg) => {
   bot.sendMessage(msg.chat.id, [
-    '📖 *How to use GrabTube Bot*',
+    '📖 *How to use YT Down Bot*',
     '',
     '1. Copy a YouTube video link',
     '2. Paste it here in the chat',
@@ -312,11 +312,11 @@ bot.on('callback_query', async (query) => {
 
     if (isAudio) {
       await bot.sendAudio(chatId, tempFile, {
-        caption: `🎵 Downloaded via GrabTube Bot`,
+        caption: `🎵 Downloaded via YT Down Bot`,
       });
     } else {
       await bot.sendVideo(chatId, tempFile, {
-        caption: `🎬 Downloaded via GrabTube Bot`,
+        caption: `🎬 Downloaded via YT Down Bot`,
         supports_streaming: true,
       });
     }
@@ -344,5 +344,5 @@ function escapeMarkdown(text) {
 }
 
 // ===== Startup =====
-console.log('\n  🤖 GrabTube Telegram Bot is running!\n');
+console.log('\n  🤖 YT Down Telegram Bot is running!\n');
 console.log('  Send a YouTube link to your bot to test.\n');
