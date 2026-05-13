@@ -102,19 +102,6 @@ docker run -p 3000:3000 --env-file .env ytdown
 
 ---
 
-## ☁️ Deploy on Render
-
-1. Push this repo to GitHub
-2. Go to [render.com](https://render.com) → **New** → **Background Worker**
-3. Connect GitHub → select this repo
-4. Set **Runtime** to Docker, **Command** to `node bot.js`
-5. Add `TELEGRAM_BOT_TOKEN` in environment variables
-6. Deploy!
-
-See [`render.yaml`](render.yaml) for the full blueprint.
-
----
-
 ## 🔒 Security
 
 - **Secrets**: Stored in `.env`, never committed to Git
