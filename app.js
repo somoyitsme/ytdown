@@ -20,11 +20,9 @@ let videoData = null;
 let currentUrl = '';
 
 // ===== Validation =====
-function isValidYoutubeUrl(url) {
+function isValidUrl(url) {
   const patterns = [
-    /^(https?:\/\/)?(www\.)?youtube\.com\/watch\?v=[\w-]+/,
-    /^(https?:\/\/)?(www\.)?youtu\.be\/[\w-]+/,
-    /^(https?:\/\/)?(www\.)?youtube\.com\/shorts\/[\w-]+/,
+    /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be|facebook\.com|fb\.watch)\/[^\s]+/i
   ];
   return patterns.some(p => p.test(url.trim()));
 }
@@ -78,12 +76,12 @@ async function handleFetch() {
   resultsSection.classList.remove('active');
 
   if (!url) {
-    showError('Please enter a YouTube video URL.');
+    showError('Please enter a video URL.');
     return;
   }
 
-  if (!isValidYoutubeUrl(url)) {
-    showError('Please enter a valid YouTube URL (youtube.com/watch?v=... or youtu.be/...)');
+  if (!isValidUrl(url)) {
+    showError('Please enter a valid YouTube or Facebook URL');
     return;
   }
 
