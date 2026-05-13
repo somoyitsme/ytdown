@@ -327,9 +327,10 @@ bot.on('callback_query', async (query) => {
     { parse_mode: 'Markdown' }
   );
 
-  const tempFile = path.join(TEMP_DIR, `${videoId}_${Date.now()}.${ext}`);
+  let tempFile = '';
 
   try {
+    tempFile = path.join(TEMP_DIR, `${urlId}_${Date.now()}.${ext}`);
     await downloadToFile(url, type, tempFile);
 
     // Check file size
@@ -373,7 +374,7 @@ bot.on('callback_query', async (query) => {
     );
   } finally {
     // Clean up temp file
-    if (fs.existsSync(tempFile)) {
+    if (tempFile && fs.existsSync(tempFile)) {
       fs.unlinkSync(tempFile);
     }
   }
