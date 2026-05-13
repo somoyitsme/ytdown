@@ -46,19 +46,29 @@ const TELEGRAM_FILE_LIMIT = process.env.TELEGRAM_API_BASE_URL
   ? 2000 * 1024 * 1024  // 2 GB
   : 50 * 1024 * 1024;   // 50 MB
 
-// ===== YouTube URL detection =====
-const YT_PATTERNS = [
+// ===== Supported URL detection =====
+const SUPPORTED_PATTERNS = [
   /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([\w-]+)/,
   /(?:https?:\/\/)?youtu\.be\/([\w-]+)/,
   /(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([\w-]+)/,
+  /(?:https?:\/\/)?(?:www\.)?facebook\.com\/(?:video\.php\?v=\d+|.+?\/videos\/\d+\/?)/,
+  /(?:https?:\/\/)?(?:www\.)?fb\.watch\/[\w-]+\/?/
 ];
 
-function extractVideoId(text) {
-  for (const p of YT_PATTERNS) {
+function extractUrl(text) {
+  for (const p of SUPPORTED_PATTERNS) {
     const m = text.match(p);
-    if (m) return m[1];
+    if (m) return m[0]; // Return the full matched URL
   }
   return null;
+}
+
+// Map to store URLs for callback buttons (bypasses 64-byte limit)
+const urlCache = new Map();
+function storeUrl(url) {
+  const id = crypto.randomBytes(4).toString('hex');
+  urlCache.set(id, url);
+  return id;
 }
 
 // ===== yt-dlp helpers =====
@@ -190,7 +200,7 @@ bot.onText(/\/help/, (msg) => {
   bot.sendMessage(msg.chat.id, [
     '📖 *How to use YT Down Bot*',
     '',
-    '1. Copy a YouTube video link',
+    '1. Copy a YouTube or Facebook video link',
     '2. Paste it here in the chat',
     '3. Choose Video or Audio',
     '4. Wait for the download to complete',
@@ -206,15 +216,16 @@ bot.onText(/\/help/, (msg) => {
   ].join('\n'), { parse_mode: 'Markdown' });
 });
 
-// ===== Handle YouTube links =====
+// ===== Handle video links =====
 bot.on('message', async (msg) => {
   if (!msg.text || msg.text.startsWith('/')) return;
 
-  const videoId = extractVideoId(msg.text);
-  if (!videoId) return; // Not a YouTube link, ignore
+  // Ensure URL is absolute
+  let url = extractUrl(msg.text);
+  if (!url) return; // Not a supported link, ignore
+  if (!url.startsWith('http')) url = 'https://' + url;
 
   const chatId = msg.chat.id;
-  const url = `https://www.youtube.com/watch?v=${videoId}`;
 
   // Send "fetching" status
   const statusMsg = await bot.sendMessage(chatId, '🔍 *Fetching video info...*', { parse_mode: 'Markdown' });
@@ -238,15 +249,18 @@ bot.on('message', async (msg) => {
       'Choose your download:',
     ].join('\n');
 
+    // Store URL and get short ID
+    const urlId = storeUrl(url);
+
     // Inline keyboard buttons
     const keyboard = {
       reply_markup: {
         inline_keyboard: [
           [
-            { text: `🎬 Download Video (${quality})`, callback_data: `dl:video:${videoId}` },
+            { text: `🎬 Download Video (${quality})`, callback_data: `dl:video:${urlId}` },
           ],
           [
-            { text: `🎵 Download MP3`, callback_data: `dl:audio:${videoId}` },
+            { text: `🎵 Download MP3`, callback_data: `dl:audio:${urlId}` },
           ],
         ],
       },
@@ -255,7 +269,7 @@ bot.on('message', async (msg) => {
 
     // Send thumbnail + info
     try {
-      await bot.sendPhoto(chatId, info.thumbnail || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`, {
+      await bot.sendPhoto(chatId, info.thumbnail || 'https://via.placeholder.com/640x360.png?text=Video', {
         caption: infoText,
         ...keyboard,
       });
@@ -283,8 +297,13 @@ bot.on('callback_query', async (query) => {
 
   if (!data.startsWith('dl:')) return;
 
-  const [, type, videoId] = data.split(':');
-  const url = `https://www.youtube.com/watch?v=${videoId}`;
+  const [, type, urlId] = data.split(':');
+  const url = urlCache.get(urlId);
+  if (!url) {
+    bot.answerCallbackQuery(query.id, { text: '❌ Link expired. Please send the link again.', show_alert: true });
+    return;
+  }
+
   const isAudio = type === 'audio';
   const ext = isAudio ? 'mp3' : 'mp4';
   const label = isAudio ? '🎵 MP3' : '🎬 Video';

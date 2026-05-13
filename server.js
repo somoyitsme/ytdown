@@ -204,14 +204,16 @@ app.get('/api/info', async (req, res) => {
   }
 
   // Basic URL validation
-  const ytPatterns = [
+  const supportedPatterns = [
     /^(https?:\/\/)?(www\.)?youtube\.com\/watch\?v=[\w-]+/,
     /^(https?:\/\/)?(www\.)?youtu\.be\/[\w-]+/,
     /^(https?:\/\/)?(www\.)?youtube\.com\/shorts\/[\w-]+/,
+    /^(https?:\/\/)?(www\.)?facebook\.com\/(?:video\.php\?v=\d+|.+?\/videos\/\d+\/?)/,
+    /^(https?:\/\/)?(www\.)?fb\.watch\/[\w-]+\/?/
   ];
 
-  if (!ytPatterns.some(p => p.test(url))) {
-    return res.status(400).json({ error: 'Invalid YouTube URL' });
+  if (!supportedPatterns.some(p => p.test(url))) {
+    return res.status(400).json({ error: 'Invalid YouTube or Facebook URL' });
   }
 
   try {
