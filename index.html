@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GrabTube — Download YouTube Videos & Audio in HD</title>
+  <meta name="description" content="Download high quality YouTube videos and audio for free. Supports 4K, 1080p, MP3, FLAC and more formats." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬇</text></svg>" />
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-effects" aria-hidden="true">
+    <div class="bg-orb bg-orb--1"></div>
+    <div class="bg-orb bg-orb--2"></div>
+    <div class="bg-orb bg-orb--3"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+      <div class="navbar__inner">
+        <a href="#" class="navbar__brand">
+          <div class="navbar__logo">⬇</div>
+          <span class="navbar__title">GrabTube</span>
+        </a>
+        <ul class="navbar__links">
+          <li><a href="#" class="navbar__link navbar__link--active" id="nav-home">Home</a></li>
+          <li><a href="#features" class="navbar__link" id="nav-features">Features</a></li>
+          <li><a href="#" class="navbar__link" id="nav-api">API</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <main class="hero" id="hero">
+      <div class="hero__badge">
+        <span class="hero__badge-dot"></span>
+        Free &amp; Unlimited Downloads
+      </div>
+
+      <h1 class="hero__heading">
+        Download YouTube<br/>videos in <span>stunning quality</span>
+      </h1>
+
+      <p class="hero__subtitle">
+        Grab any YouTube video or audio in 4K, 1080p, MP3, FLAC and more — fast, free, and with zero limits.
+      </p>
+
+      <!-- URL Input -->
+      <div class="input-section">
+        <div class="input-wrapper" id="input-wrapper">
+          <div class="input-wrapper__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <input
+            type="url"
+            id="url-input"
+            class="input-wrapper__field"
+            placeholder="Paste YouTube video link here..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button class="input-wrapper__btn" id="fetch-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <span>Fetch</span>
+          </button>
+        </div>
+
+        <div class="error-msg" id="error-msg"></div>
+
+        <!-- Format Chips -->
+        <div class="formats-row">
+          <span class="format-chip format-chip--video">MP4</span>
+          <span class="format-chip format-chip--video">Best Resolution</span>
+          <span class="format-chip format-chip--audio">MP3</span>
+          <span class="format-chip format-chip--audio">Best Quality</span>
+        </div>
+      </div>
+
+      <!-- Loader -->
+      <div class="loader" id="loader">
+        <div class="loader__spinner"></div>
+        <p class="loader__text">Fetching video information...</p>
+      </div>
+
+      <!-- Results -->
+      <div class="results" id="results">
+        <div class="result-card">
+          <div class="result-card__header">
+            <img class="result-card__thumb" id="thumb" src="" alt="Video thumbnail" />
+            <div class="result-card__info">
+              <h2 class="result-card__title" id="video-title"></h2>
+              <div class="result-card__meta" id="video-meta"></div>
+            </div>
+          </div>
+          <div class="dl-cards">
+            <!-- Video Download Card -->
+            <div class="dl-card dl-card--video" id="dl-video">
+              <div class="dl-card__icon">🎬</div>
+              <div class="dl-card__label">Best Video</div>
+              <div class="dl-card__badge badge--4k">4K</div>
+              <div class="dl-card__quality">4K</div>
+              <div class="dl-card__resolution">3840×2160</div>
+              <div class="dl-card__format">MP4 • Best Quality</div>
+              <button class="dl-card__btn dl-card__btn--video" id="btn-download-video">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download Video
+              </button>
+            </div>
+            <!-- Audio Download Card -->
+            <div class="dl-card dl-card--audio" id="dl-audio">
+              <div class="dl-card__icon">🎵</div>
+              <div class="dl-card__label">Best Audio</div>
+              <div class="dl-card__badge badge--audio">MP3</div>
+              <div class="dl-card__quality">MP3</div>
+              <div class="dl-card__resolution">320kbps • Best Quality</div>
+              <div class="dl-card__format">MP3 • High Fidelity</div>
+              <button class="dl-card__btn dl-card__btn--audio" id="btn-download-audio">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download MP3
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+      <h2 class="features__heading">Why choose <span>GrabTube</span>?</h2>
+      <div class="features__grid">
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--purple">🎬</div>
+          <h3 class="feature-card__title">Ultra HD Quality</h3>
+          <p class="feature-card__desc">Download videos up to 4K resolution with crystal clear quality. No compression, no compromise.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--cyan">⚡</div>
+          <h3 class="feature-card__title">Lightning Fast</h3>
+          <p class="feature-card__desc">Optimized servers deliver blazing fast download speeds so you get your content in seconds.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--pink">🎵</div>
+          <h3 class="feature-card__title">Audio Extraction</h3>
+          <p class="feature-card__desc">Extract pure audio in MP3, FLAC, or M4A — perfect for music, podcasts, and lectures.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--green">🔒</div>
+          <h3 class="feature-card__title">Private & Secure</h3>
+          <p class="feature-card__desc">No tracking, no accounts, no data collection. Your downloads stay completely private.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2026 GrabTube. Built for personal use. Not affiliated with YouTube.</p>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

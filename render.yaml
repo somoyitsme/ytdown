@@ -1,0 +1,26 @@
+services:
+  # Telegram Bot — runs 24/7 as a background worker
+  - type: worker
+    name: grabtube-bot
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerCommand: node bot.js
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false  # Set manually in Render dashboard (secret)
+
+  # Web Server (optional — deploy if you want the website too)
+  # Uncomment below to also deploy the web UI
+  #
+  # - type: web
+  #   name: grabtube-web
+  #   runtime: docker
+  #   dockerfilePath: ./Dockerfile
+  #   dockerCommand: node server.js
+  #   envVars:
+  #     - key: PORT
+  #       value: 3000
+  #     - key: RATE_LIMIT_MAX
+  #       value: 30
+  #     - key: RATE_LIMIT_WINDOW_MS
+  #       value: 60000
