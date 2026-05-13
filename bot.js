@@ -47,12 +47,9 @@ const TELEGRAM_FILE_LIMIT = process.env.TELEGRAM_API_BASE_URL
   : 50 * 1024 * 1024;   // 50 MB
 
 // ===== Supported URL detection =====
+// Broad regex to catch ANY YouTube or Facebook link (including Reels, shorts, share links, etc.)
 const SUPPORTED_PATTERNS = [
-  /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([\w-]+)/,
-  /(?:https?:\/\/)?youtu\.be\/([\w-]+)/,
-  /(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([\w-]+)/,
-  /(?:https?:\/\/)?(?:www\.)?facebook\.com\/(?:video\.php\?v=\d+|.+?\/videos\/\d+\/?)/,
-  /(?:https?:\/\/)?(?:www\.)?fb\.watch\/[\w-]+\/?/
+  /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be|facebook\.com|fb\.watch)\/[^\s]+/i
 ];
 
 function extractUrl(text) {

@@ -203,13 +203,9 @@ app.get('/api/info', async (req, res) => {
     return res.status(400).json({ error: 'Missing "url" query parameter' });
   }
 
-  // Basic URL validation
+  // Broad URL validation for YouTube and Facebook (including Reels)
   const supportedPatterns = [
-    /^(https?:\/\/)?(www\.)?youtube\.com\/watch\?v=[\w-]+/,
-    /^(https?:\/\/)?(www\.)?youtu\.be\/[\w-]+/,
-    /^(https?:\/\/)?(www\.)?youtube\.com\/shorts\/[\w-]+/,
-    /^(https?:\/\/)?(www\.)?facebook\.com\/(?:video\.php\?v=\d+|.+?\/videos\/\d+\/?)/,
-    /^(https?:\/\/)?(www\.)?fb\.watch\/[\w-]+\/?/
+    /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be|facebook\.com|fb\.watch)\/[^\s]+/i
   ];
 
   if (!supportedPatterns.some(p => p.test(url))) {
