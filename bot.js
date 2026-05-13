@@ -71,7 +71,14 @@ function storeUrl(url) {
 // ===== yt-dlp helpers =====
 function ytdlpInfo(url) {
   return new Promise((resolve, reject) => {
-    execFile('yt-dlp', ['--dump-json', '--no-playlist', '--no-warnings', url],
+    execFile('yt-dlp', [
+      '--dump-json',
+      '--no-playlist',
+      '--no-warnings',
+      '--no-check-certificates',
+      '--socket-timeout', '15',
+      url
+    ],
       { maxBuffer: 10 * 1024 * 1024 },
       (err, stdout, stderr) => {
         if (err) return reject(new Error(stderr || err.message));
@@ -155,7 +162,13 @@ function estimateSizes(info) {
 // Download to file using yt-dlp
 function downloadToFile(url, type, outputPath) {
   return new Promise((resolve, reject) => {
-    const args = ['--no-playlist', '--no-warnings'];
+    const args = [
+      '--no-playlist',
+      '--no-warnings',
+      '--no-check-certificates',
+      '--socket-timeout', '15',
+      '--retries', '3'
+    ];
 
     if (type === 'audio') {
       args.push('-f', 'bestaudio', '-x', '--audio-format', 'mp3', '--audio-quality', '0');
@@ -279,10 +292,10 @@ bot.on('message', async (msg) => {
     bot.deleteMessage(chatId, statusMsg.message_id).catch(() => {});
 
   } catch (err) {
-    console.error('[BOT ERROR]', err.message);
+    console.error(`[BOT ERROR for ${url}]:`, err.message);
     bot.editMessageText(
-      '❌ Failed to fetch video info. Please check the link and try again.',
-      { chat_id: chatId, message_id: statusMsg.message_id }
+      `❌ Failed to fetch video info.\n\n*Error details:*\n\`${escapeMarkdown(err.message.substring(0, 200))}\`\n\nPlease check the link and try again.`,
+      { chat_id: chatId, message_id: statusMsg.message_id, parse_mode: 'Markdown' }
     );
   }
 });
