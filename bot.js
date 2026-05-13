@@ -31,11 +31,20 @@ if (!TOKEN) {
   process.exit(1);
 }
 
-const bot = new TelegramBot(TOKEN, { polling: true });
+const botOptions = { polling: true };
+if (process.env.TELEGRAM_API_BASE_URL) {
+  botOptions.baseApiUrl = process.env.TELEGRAM_API_BASE_URL;
+  console.log(`  🌐 Using Local Telegram API: ${botOptions.baseApiUrl}`);
+}
+
+const bot = new TelegramBot(TOKEN, botOptions);
 const TEMP_DIR = path.join(os.tmpdir(), 'ytdown-bot');
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
 
-const TELEGRAM_FILE_LIMIT = 50 * 1024 * 1024; // 50 MB
+// If using local API, limit is 2 GB. Otherwise, standard 50 MB.
+const TELEGRAM_FILE_LIMIT = process.env.TELEGRAM_API_BASE_URL
+  ? 2000 * 1024 * 1024  // 2 GB
+  : 50 * 1024 * 1024;   // 50 MB
 
 // ===== YouTube URL detection =====
 const YT_PATTERNS = [
@@ -187,8 +196,9 @@ bot.onText(/\/help/, (msg) => {
     '4. Wait for the download to complete',
     '',
     '⚠️ *Limits:*',
-    '• Telegram allows max 50 MB file uploads',
-    '• For larger files, use the web version',
+    process.env.TELEGRAM_API_BASE_URL
+      ? '• Uploads up to 2 GB are supported! 🎉'
+      : '• Telegram allows max 50 MB file uploads\n• For larger files, use the web version',
     '',
     '*Commands:*',
     '/start — Welcome message',
@@ -296,8 +306,9 @@ bot.on('callback_query', async (query) => {
     const stats = fs.statSync(tempFile);
 
     if (stats.size > TELEGRAM_FILE_LIMIT) {
+      const limitText = process.env.TELEGRAM_API_BASE_URL ? '2 GB' : '50 MB';
       await bot.editMessageText(
-        `⚠️ *File too large for Telegram* (${formatSize(stats.size)})\n\nTelegram limits uploads to 50 MB. Use the web version instead.`,
+        `⚠️ *File too large for Telegram* (${formatSize(stats.size)})\n\nTelegram limits uploads to ${limitText}. Use the web version instead.`,
         { chat_id: chatId, message_id: statusMsg.message_id, parse_mode: 'Markdown' }
       );
       fs.unlinkSync(tempFile);
