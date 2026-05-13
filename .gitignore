@@ -3,7 +3,9 @@ node_modules/
 
 # Secrets — NEVER commit
 .env
-.env.*
+.env.local
+.env.production
+!.env.example
 
 # OS junk
 .DS_Store
